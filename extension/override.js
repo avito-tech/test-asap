@@ -1,265 +1,41 @@
 const socket = io('http://localhost:3000');
 
+//////////////////////
+
 socket.on('connect', () => {
-    socket.on('loadTab', data => {
-        chrome.tabs.create({ url: data.url, active: true, index: 0 }, tab => {
-            socket.emit('tabLoaded', { id: tab.id });
-        });
-    });
-});
-
-var attach = function(debuggee) {
-    return new Promise(function(resolve) {
-        chrome.debugger.attach(debuggee, '1.2', resolve);
-    });
-};
-
-function waitForTabToLoad(debuggee) {
-    return new Promise(function(resolve) {
-        chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
-            if (tabId === debuggee.tabId && changeInfo.status && changeInfo.status == 'complete') {
-                resolve(debuggee);
-            }
-        });
-    });
-}
-
-function command(debuggee, commandName, params) {
-    params = params || {};
-
-    return new Promise(function(resolve, reject) {
-        chrome.debugger.sendCommand(debuggee, commandName, params, function() {
-            if (chrome.runtime.lastError) {
-                reject(chrome.runtime.lastError);
-            } else {
-                resolve.apply(this, arguments);
-            }
-        });
-    });
-}
-
-function getKeyCode(char) {
-    var A_CHAR_CODE = 'a'.charCodeAt(0);
-    var A_KEY_CODE = 41;
-    var ZERO_CHAR_CODE = '0'.charCodeAt(0);
-    var ZERO_KEY_CODE = 30;
-
-    switch (char) {
-        case ' ':
-            return 20;
-        case '-':
-            return 189;
-        case ',':
-            return 188;
-        case '.':
-            return 190;
-
-        default:
-            if (char.match(/[0-9]/i)) {
-                return char.toLowerCase().charCodeAt(0) - ZERO_CHAR_CODE + ZERO_KEY_CODE;
-            }
-
-            if (char.match(/[a-z]/i)) {
-                return char.toLowerCase().charCodeAt(0) - A_CHAR_CODE + A_KEY_CODE;
-            }
-
-            return 20;
-    }
-}
-
-const WAITING_TIMEOUT_IN_MILLISECS = 10000;
-
-class Tab {
-    constructor(debuggee) {
-        this.debuggee = debuggee;
-        this._documentUpdatedHandlers = [];
-    }
-
-    click(selector) {
-        selector = selector.replace('"', '\\"');
-
-        return this._command('Runtime.evaluate', {
-            expression: 'document.querySelector("' + selector + '").scrollIntoViewIfNeeded()'
-        })
-            .then(() =>
-                this._command('Runtime.evaluate', {
-                    expression: 'rect = document.querySelector("' + selector + '").getBoundingClientRect(), { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right }',
-                    returnByValue: true
-                })
-            )
-            .then(result => {
-                let rect = result.result.value;
-                let centerX = (rect.left + rect.right) >> 1;
-                let centerY = (rect.top + rect.bottom) >> 1;
-                return this._command('Input.dispatchMouseEvent', {
-                    x: centerX,
-                    y: centerY,
-                    type: 'mouseMoved',
-                    button: 'none',
-                    clickCount: 0
-                })
-                .then(() =>
-                    this._command('Input.dispatchMouseEvent', {
-                        x: centerX,
-                        y: centerY,
-                        type: 'mousePressed',
-                        button: 'left',
-                        clickCount: 1
-                    })
-                )
-                .then(() =>
-                    this._command('Input.dispatchMouseEvent', {
-                        x: centerX,
-                        y: centerY,
-                        type: 'mouseReleased',
-                        button: 'left',
-                        clickCount: 1
-                    })
-                );
+    socket.on('tabCreate', data => {
+        Tab.create(data.url).then(tab => {
+            socket.emit('result', {
+                success: true,
+                result: tab.getId(),
+                cid: data.cid
             });
-    }
+        });
+    });
 
-    typeText(selector, text) {
-        return this.click(selector) // focus
-            .then(() => this._typeChars(selector, text));
-    }
+    socket.on('command', data => {
+        const properTab = tabsStorage[data.tabId];
 
-    // waitFor(selector)
-
-    _command(commandName, args) {
-        return command(this.debuggee, commandName, args);
-    }
-
-    _typeChars(selector, text) {
-        if (!text) {
-            return Promise.resolve();
+        if (!properTab) {
+            socket.emit('result', {
+                success: false,
+                result: { message: `Tab with id ${data.tabId} not found` }
+            });
         }
 
-        return this._typeChar(selector, text[0])
-            .then(() => this._typeChars(selector, text.substr(1)));
-    }
-
-    _typeChar(querySelector, char) {
-        let keyCode = getKeyCode(char);
-
-        return this._command('Input.dispatchKeyEvent', {
-            nativeVirtualKeyCode: keyCode,
-            text: '',
-            type: 'rawKeyDown',
-            unmodifiedText: '',
-            windowsVirtualKeyCode: keyCode
-        })
-            .then(() =>
-              this._command('Input.dispatchKeyEvent', {
-                  nativeVirtualKeyCode: 0,
-                  text: char,
-                  type: 'char',
-                  unmodifiedText: char,
-                  windowsVirtualKeyCode: 0
-              })
-            )
-            .then(() =>
-              this._command('Input.dispatchKeyEvent', {
-                  nativeVirtualKeyCode: keyCode,
-                  text: '',
-                  type: 'keyUp',
-                  unmodifiedText: '',
-                  windowsVirtualKeyCode: keyCode
-              })
-            );
-    }
-
-    close() {
-        return new Promise(resolve => chrome.tabs.remove(this.debuggee.tabId, resolve));
-    }
-
-    countItems(selector) {
-        selector = selector.replace('"', '\\"');
-
-        return new Promise((resolve) => {
-            this._command('Runtime.evaluate', {
-                expression: 'document.querySelectorAll("' + selector + '").length',
-                returnByValue: true
-            })
-                .then(result => {
-                    resolve(result.result.value);
+        properTab[data.command](...data.args)
+            .then((result) => {
+                socket.emit('result', {
+                    success: true,
+                    result: result,
+                    cid: data.cid
                 });
-        });
-    }
-
-    getStyle(selector, propName) {
-        selector = selector.replace('"', '\\"');
-
-        return new Promise((resolve) => {
-            this._command('Runtime.evaluate', {
-                expression: 'getComputedStyle(document.querySelector("' + selector + '"))["' + propName + '"]',
-                returnByValue: true
-            })
-                .then(result => {
-                    resolve(result.result.value);
+            }, (error) => {
+                socket.emit('result', {
+                    success: false,
+                    result: error,
+                    cid: data.cid
                 });
-        });
-    }
-
-    getAttr(selector, attrName) {
-        selector = selector.replace('"', '\\"');
-
-        return new Promise((resolve) => {
-            this._command('Runtime.evaluate', {
-                expression: 'document.querySelector("' + selector + '").getAttribute("' + attrName + '")',
-                returnByValue: true
-            })
-                .then(result => {
-                    resolve(result.result.value);
-                });
-        });
-    }
-
-    hasClass(selector, className) {
-        return this.getAttr(selector, 'class')
-            .then(classList =>
-                Promise.resolve(classList.split(' ').indexOf(className) !== -1)
-            );
-    }
-
-    _handleForAppearance(selector, timeout) {
-        return new Promise((resolve, reject) => {
-            let timeoutId;
-            let pollingId;
-
-            let poll = () => {
-                pollingId = setTimeout(() => {
-                    this.countItems(selector)
-                        .then(exists => {
-                            if (exists) {
-                                clearTimeout(pollingId);
-                                clearTimeout(timeoutId);
-                                resolve();
-                            } else {
-                                poll();
-                            }
-                        });
-                }, 0);
-            };
-
-            poll();
-
-            timeoutId = setTimeout(() => {
-                clearInterval(pollingId);
-                reject();
-            }, timeout);
-        });
-    }
-
-    waitFor(selector) {
-        return this._enableDOM()
-            .then(() => this.countItems(selector))
-            .then(present => {
-                if (present > 0) {
-                    return Promise.resolve();
-                } else {
-                    return this._handleForAppearance(selector, WAITING_TIMEOUT_IN_MILLISECS);
-                }
             });
     }
 

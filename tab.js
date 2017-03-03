@@ -1,18 +1,72 @@
-function tab(io) {
+var Tab = require('./extension/tab.js');
+var resultCallbacks = {};
+var callbackId = 0;
 
-    function load(url) {
-        return new Promise((resolve, reject) => {
-            io.on('tabLoaded', id => {
-                resolve(id);
-            });
-            io.emit('loadTab', { url });
-        });
-    }
+var tabs = {};
+var callbacks = {};
 
-    return {
-        load
+function register(resolve, reject) {
+    cid = callbackId++;
+
+    callbacks[cid] = data => {
+        delete callbacks[cid];
+
+        if (data.success) {
+            resolve(result)
+        } else {
+            reject(result);
+        }
     };
 
+    return cid;
+}
+
+function tab(socket) {
+    class TabProxy {
+        constructor(tabId) {
+            this.tabId = tabId;
+        }
+    }
+
+    Object.getOwnPropertyNames(Tab.prototype).forEach(methodName => {
+        // skip constructor and private methods
+        if (methodName === 'constructor' || methodName[0] === '_' || methodName === 'getId') {
+            return;
+        }
+
+        TabProxy.prototype[methodName] = function() {
+            var args = arguments;
+
+            return new Promise((resolve, reject) => {
+                var cid = register(resolve, reject);
+
+                socket.emit('command', {
+                    tabId: this.tabId,
+                    command: methodName,
+                    args: args,
+                    cid: cid
+                });
+            });
+        };
+    });
+
+    socket.on('result', data => {
+        if (callbacks[data.cid]) {
+            callbacks[data.cid](data);
+        } else {
+            console.log('Missing cid: ' + data.cid);
+        }
+    });
+
+    TabProxy.create = (url) => {
+        return new Promise((resolve, reject) => {
+            var cid = register(resolve, reject);
+
+            socket.emit('tabCreate', { url, cid });
+        });
+    };
+
+    return TabProxy;
 }
 
 module.exports = tab;
