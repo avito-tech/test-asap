@@ -75,15 +75,15 @@ class Tab {
         this._documentUpdatedHandlers = [];
     }
 
-    click(querySelector) {
-        querySelector = querySelector.replace('"', '\\"');
+    click(selector) {
+        selector = selector.replace('"', '\\"');
 
         return this._command('Runtime.evaluate', {
-            expression: 'document.querySelector("' + querySelector + '").scrollIntoViewIfNeeded()'
+            expression: 'document.querySelector("' + selector + '").scrollIntoViewIfNeeded()'
         })
             .then(() =>
                 this._command('Runtime.evaluate', {
-                    expression: 'rect = document.querySelector("' + querySelector + '").getBoundingClientRect(), { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right }',
+                    expression: 'rect = document.querySelector("' + selector + '").getBoundingClientRect(), { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right }',
                     returnByValue: true
                 })
             )
@@ -174,6 +174,8 @@ class Tab {
     }
 
     countItems(selector) {
+        selector = selector.replace('"', '\\"');
+
         return new Promise((resolve) => {
             this._command('Runtime.evaluate', {
                 expression: 'document.querySelectorAll("' + selector + '").length',
@@ -183,6 +185,41 @@ class Tab {
                     resolve(result.result.value);
                 });
         });
+    }
+
+    getStyle(selector, propName) {
+        selector = selector.replace('"', '\\"');
+
+        return new Promise((resolve) => {
+            this._command('Runtime.evaluate', {
+                expression: 'getComputedStyle(document.querySelector("' + selector + '"))["' + propName + '"]',
+                returnByValue: true
+            })
+                .then(result => {
+                    resolve(result.result.value);
+                });
+        });
+    }
+
+    getAttr(selector, attrName) {
+        selector = selector.replace('"', '\\"');
+
+        return new Promise((resolve) => {
+            this._command('Runtime.evaluate', {
+                expression: 'document.querySelector("' + selector + '").getAttribute("' + attrName + '")',
+                returnByValue: true
+            })
+                .then(result => {
+                    resolve(result.result.value);
+                });
+        });
+    }
+
+    hasClass(selector, className) {
+        return this.getAttr(selector, 'class')
+            .then(classList =>
+                Promise.resolve(classList.split(' ').indexOf(className) !== -1)
+            );
     }
 
     _handleForAppearance(selector, timeout) {
@@ -195,7 +232,7 @@ class Tab {
                     this.countItems(selector)
                         .then(exists => {
                             if (exists) {
-                                clearTimeout(pollingId)
+                                clearTimeout(pollingId);
                                 clearTimeout(timeoutId);
                                 resolve();
                             } else {
@@ -253,9 +290,3 @@ Tab.create = (location) => {
         });
     });
 };
-
-// function assert(condition) {
-//     return new Promise((resolve, reject) => {
-//         return condition ? resolve(condition) : reject(condition);
-//     });
-// }
