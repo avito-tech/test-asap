@@ -1,3 +1,5 @@
+console.log(io);
+
 var attach = function(debuggee) {
     return new Promise(function(resolve) {
         chrome.debugger.attach(debuggee, '1.2', resolve);

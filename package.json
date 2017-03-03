@@ -10,7 +10,10 @@
     "socket.io": "^1.6.0",
     "socket.io-client": "^1.6.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chrome-launch": "^1.1.4",
+    "chrome-location": "^1.2.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
