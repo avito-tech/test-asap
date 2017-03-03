@@ -60,49 +60,48 @@ class Tab {
     click(querySelector) {
         querySelector = querySelector.replace('"', '\\"');
 
-        return this.command('Runtime.evaluate', { expression: 'document.querySelector("' + querySelector + '").scrollIntoViewIfNeeded()' })
-      .then(() =>
-        this.command('Runtime.evaluate', {
-            expression: 'rect = document.querySelector("' + querySelector + '").getBoundingClientRect(), { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right }',
-            returnByValue: true
-        })
-      )
-      .then(result => {
-          let rect = result.result.value;
-          let centerX = (rect.left + rect.right) / 2;
-          let centerY = (rect.top + rect.bottom) / 2;
-
-          return this.command('Input.dispatchMouseEvent', {
-              x: centerX,
-              y: centerY,
-              type: 'mouseMoved',
-              button: 'none',
-              clickCount: 0
-          })
-          .then(() =>
-            this.command('Input.dispatchMouseEvent', {
-                x: centerX,
-                y: centerY,
-                type: 'mousePressed',
-                button: 'left',
-                clickCount: 1
-            })
-          )
-          .then(() =>
-            this.command('Input.dispatchMouseEvent', {
-                x: centerX,
-                y: centerY,
-                type: 'mouseReleased',
-                button: 'left',
-                clickCount: 1
-            })
-          );
-      });
+        return this._command('Runtime.evaluate', { expression: 'document.querySelector("' + querySelector + '").scrollIntoViewIfNeeded()' })
+            .then(() =>
+                this._command('Runtime.evaluate', {
+                    expression: 'rect = document.querySelector("' + querySelector + '").getBoundingClientRect(), { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right }',
+                    returnByValue: true
+                })
+            )
+            .then(result => {
+                let rect = result.result.value;
+                let centerX = (rect.left + rect.right) / 2;
+                let centerY = (rect.top + rect.bottom) / 2;
+                return this._command('Input.dispatchMouseEvent', {
+                    x: centerX,
+                    y: centerY,
+                    type: 'mouseMoved',
+                    button: 'none',
+                    clickCount: 0
+                })
+                .then(() =>
+                    this._command('Input.dispatchMouseEvent', {
+                        x: centerX,
+                        y: centerY,
+                        type: 'mousePressed',
+                        button: 'left',
+                        clickCount: 1
+                    })
+                )
+                .then(() =>
+                    this._command('Input.dispatchMouseEvent', {
+                        x: centerX,
+                        y: centerY,
+                        type: 'mouseReleased',
+                        button: 'left',
+                        clickCount: 1
+                    })
+                );
+            });
     }
 
     typeText(selector, text) {
         return this.click(selector) // focus
-        .then(() => this._typeChars(selector, text));
+            .then(() => this._typeChars(selector, text));
     }
 
     // waitFor(selector)
@@ -117,37 +116,37 @@ class Tab {
         }
 
         return this._typeChar(selector, text[0])
-      .then(() => this._typeChars(selector, text.substr(1)));
+            .then(() => this._typeChars(selector, text.substr(1)));
     }
 
     _typeChar(querySelector, char) {
         let keyCode = getKeyCode(char);
 
-        return this.command('Input.dispatchKeyEvent', {
+        return this._command('Input.dispatchKeyEvent', {
             nativeVirtualKeyCode: keyCode,
             text: '',
             type: 'rawKeyDown',
             unmodifiedText: '',
             windowsVirtualKeyCode: keyCode
         })
-      .then(() =>
-        this.command('Input.dispatchKeyEvent', {
-            nativeVirtualKeyCode: 0,
-            text: char,
-            type: 'char',
-            unmodifiedText: char,
-            windowsVirtualKeyCode: 0
-        })
-      )
-      .then(() =>
-        this.command('Input.dispatchKeyEvent', {
-            nativeVirtualKeyCode: keyCode,
-            text: '',
-            type: 'keyUp',
-            unmodifiedText: '',
-            windowsVirtualKeyCode: keyCode
-        })
-      );
+            .then(() =>
+              this._command('Input.dispatchKeyEvent', {
+                  nativeVirtualKeyCode: 0,
+                  text: char,
+                  type: 'char',
+                  unmodifiedText: char,
+                  windowsVirtualKeyCode: 0
+              })
+            )
+            .then(() =>
+              this._command('Input.dispatchKeyEvent', {
+                  nativeVirtualKeyCode: keyCode,
+                  text: '',
+                  type: 'keyUp',
+                  unmodifiedText: '',
+                  windowsVirtualKeyCode: keyCode
+              })
+            );
     }
 }
 
