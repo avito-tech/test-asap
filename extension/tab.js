@@ -139,8 +139,6 @@ class Tab {
             .then(() => this._typeChars(selector, text));
     }
 
-    // waitFor(selector)
-
     _command(commandName, args) {
         return command(this.debuggee, commandName, args);
     }
@@ -184,6 +182,18 @@ class Tab {
             );
     }
 
+    _eval(expressionText) {
+        return new Promise((resolve) => {
+            this._command('Runtime.evaluate', {
+                expression: expressionText,
+                returnByValue: true
+            })
+                .then(result => {
+                    resolve(result.result.value);
+                });
+        });
+    }
+
     close() {
         return new Promise(resolve => chrome.tabs.remove(this.debuggee.tabId, resolve));
     }
@@ -191,43 +201,25 @@ class Tab {
     countItems(selector) {
         selector = selector.replace(/"/g, '\\"');
 
-        return new Promise((resolve) => {
-            this._command('Runtime.evaluate', {
-                expression: 'document.querySelectorAll("' + selector + '").length',
-                returnByValue: true
-            })
-                .then(result => {
-                    resolve(result.result.value);
-                });
-        });
+        return this._eval('document.querySelectorAll("' + selector + '").length');
     }
 
     getStyle(selector, propName) {
         selector = selector.replace(/"/g, '\\"');
 
-        return new Promise((resolve) => {
-            this._command('Runtime.evaluate', {
-                expression: 'getComputedStyle(document.querySelector("' + selector + '"))["' + propName + '"]',
-                returnByValue: true
-            })
-                .then(result => {
-                    resolve(result.result.value);
-                });
-        });
+        return this._eval('getComputedStyle(document.querySelector("' + selector + '"))["' + propName + '"]');
     }
 
     getAttr(selector, attrName) {
         selector = selector.replace(/"/g, '\\"');
 
-        return new Promise((resolve) => {
-            this._command('Runtime.evaluate', {
-                expression: 'document.querySelector("' + selector + '").getAttribute("' + attrName + '")',
-                returnByValue: true
-            })
-                .then(result => {
-                    resolve(result.result.value);
-                });
-        });
+        return this._eval('document.querySelector("' + selector + '").getAttribute("' + attrName + '")');
+    }
+
+    getText(selector) {
+        selector = selector.replace(/"/g, '\\"');
+
+        return this._eval('document.querySelector("' + selector + '").textContent');
     }
 
     hasClass(selector, className) {
