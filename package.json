@@ -9,7 +9,7 @@
     "http-mitm-proxy": "^0.5.1",
     "http-proxy": "^1.16.2",
     "mitm-proxy": "0.0.1",
-    "sinon": "^1.17.6",
+    "sinon": "^1.17.7",
     "socket.io": "^1.6.0",
     "socket.io-adapter": "^1.1.0",
     "socket.io-client": "^1.6.0"

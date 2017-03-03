@@ -1,3 +1,4 @@
 node_modules
 .idea
+.http-mitm-proxy
 tmp

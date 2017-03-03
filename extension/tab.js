@@ -261,7 +261,7 @@ class Tab {
 
             timeoutId = setTimeout(() => {
                 clearInterval(pollingId);
-                reject();
+                reject({ message: `Waited too long for ${selector}`});
             }, timeout);
         });
     }
