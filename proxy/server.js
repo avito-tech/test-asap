@@ -6,15 +6,22 @@ var app = express();
 
 var proxy = httpProxy.createProxyServer({});
 
+var MWs = {};
+
 app.use(function(req, res, next) {
-    console.log(req.hostname);
-    next();
+    if (req.hostname === 'avito.ru') {
+        res.send('mock');
+    } else {
+        next();
+    }
 });
 
 app.use(function(req) {
-    var mw = expressHttpProxy(req.hostname);
+    if (!MWs[req.hostname]) {
+        MWs[req.hostname] = expressHttpProxy(req.hostname);
+    }
 
-    mw.apply(this, arguments);
+    MWs[req.hostname].apply(this, arguments);
 });
 app.listen(8888);
 
