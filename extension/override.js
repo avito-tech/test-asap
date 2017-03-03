@@ -27,9 +27,14 @@ function waitForTabToLoad(debuggee) {
 function command(debuggee, commandName, params) {
     params = params || {};
 
-    return new Promise(function(resolve) {
-        // TODO reject and runtem.lastError
-        chrome.debugger.sendCommand(debuggee, commandName, params, resolve);
+    return new Promise(function(resolve, reject) {
+        chrome.debugger.sendCommand(debuggee, commandName, params, function() {
+            if (chrome.runtime.lastError) {
+                reject(chrome.runtime.lastError);
+            } else {
+                resolve.apply(this, arguments);
+            }
+        });
     });
 }
 
@@ -84,8 +89,8 @@ class Tab {
             )
             .then(result => {
                 let rect = result.result.value;
-                let centerX = (rect.left + rect.right) / 2;
-                let centerY = (rect.top + rect.bottom) / 2;
+                let centerX = (rect.left + rect.right) >> 1;
+                let centerY = (rect.top + rect.bottom) >> 1;
                 return this._command('Input.dispatchMouseEvent', {
                     x: centerX,
                     y: centerY,
@@ -180,46 +185,30 @@ class Tab {
         });
     }
 
-    _onDocumentUpdated() {
-        alert('asdfadsf');
-        let args = arguments;
-
-        this._documentUpdatedHandlers.forEach(handler => handler.apply(this, args));
-    }
-
-    _handleDocumentUpdated(fn) {
-        if (this._documentUpdatedHandled) {
-            return Promise.resolve();
-        }
-        chrome.debugger.onEvent.addListener(this._onDocumentUpdated);
-
-        this._documentUpdatedHandlers.push(fn);
-    }
-
-    _unhandleDocumentUpdated(fn) {
-        this._documentUpdatedHandlers =
-            this._documentUpdatedHandlers.filter(h => h != fn);
-    }
-
     _handleForAppearance(selector, timeout) {
         return new Promise((resolve, reject) => {
             let timeoutId;
+            let pollingId;
 
-            let handler = () => {
-                this.countItems(selector)
-                    .then(exists => {
-                        if (exists) {
-                            this._unhandleDocumentUpdated(handler);
-                            clearTimeout(timeoutId);
-                            resolve();
-                        }
-                    });
+            let poll = () => {
+                pollingId = setTimeout(() => {
+                    this.countItems(selector)
+                        .then(exists => {
+                            if (exists) {
+                                clearTimeout(pollingId)
+                                clearTimeout(timeoutId);
+                                resolve();
+                            } else {
+                                poll();
+                            }
+                        });
+                }, 0);
             };
 
-            this._handleDocumentUpdated(handler);
+            poll();
 
             timeoutId = setTimeout(() => {
-                this._unhandleDocumentUpdated(handler);
+                clearInterval(pollingId);
                 reject();
             }, timeout);
         });
