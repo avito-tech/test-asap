@@ -1,3 +1,22 @@
+var config = {
+    mode: 'fixed_servers',
+    rules: {
+        proxyForHttps: {
+            host: '127.0.0.1',
+            port: 8889
+        },
+        bypassList: ['localhost']
+    }
+};
+
+if (typeof chrome !== 'undefined') {
+    chrome.proxy.settings.set({
+        value: config,
+        scope: 'regular'
+    }, function() {
+    });
+}
+
 var attach = function(debuggee) {
     return new Promise(function(resolve) {
         chrome.debugger.attach(debuggee, '1.2', resolve);
@@ -286,12 +305,6 @@ Tab.create = (location) => {
         });
     });
 };
-
-function assert(condition, message) {
-    return new Promise((resolve, reject) => {
-        return condition ? resolve(condition) : reject(message);
-    });
-}
 
 if (typeof module !== 'undefined') {
     module.exports = Tab;

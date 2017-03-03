@@ -26,9 +26,10 @@ function launch(config = {}) {
                 '--user-data-dir=' + userDataDir,
                 '--no-first-run',
                 '--system-developer-mode',
-                '--allow-file-access',
                 '--silent-debugger-extension-api',
-                '--disable-translate'
+                '--disable-translate',
+                '--test-type',
+                '--ignore-certificate-errors'
             ]
         });
     });

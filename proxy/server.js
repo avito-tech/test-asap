@@ -12,11 +12,8 @@ var proxy = httpProxy.createProxyServer({});
 var MWs = {};
 
 app.use(function(req, res, next) {
-    if (req.hostname === 'avito.ru') {
-        res.send('mock');
-    } else {
-        next();
-    }
+    console.log(req);
+    res.send('adsfad');
 });
 
 app.use(function(req) {
@@ -27,7 +24,7 @@ app.use(function(req) {
     MWs[req.hostname].apply(this, arguments);
 });
 
-app.listen(8888);
+app.listen(8889);
 
 //https://docs.nodejitsu.com/articles/HTTP/servers/how-to-create-a-HTTPS-server/
 //http://blog.mgechev.com/2014/02/19/create-https-tls-ssl-application-with-express-nodejs/
@@ -39,8 +36,9 @@ var options = {
     cert: fs.readFileSync(baseCertPath + 'cert.pem')
 };
 
-https.createServer(options, function(req, res) {
-    res.end('hello https');
-}).listen(8889);
+// https.createServer(options, function(req, res) {
+//     console.log(req.url);
+//     res.end('hello https');
+// }).listen(8889);
 
 console.log('started');
