@@ -96,12 +96,12 @@ class Tab {
         return this._command('Runtime.evaluate', {
             expression: 'document.querySelector("' + selector + '").scrollIntoViewIfNeeded()'
         })
-            .then(() =>
-                this._command('Runtime.evaluate', {
-                    expression: 'rect = document.querySelector("' + selector + '").getBoundingClientRect(), { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right }',
+            .then(() => {
+                return this._command('Runtime.evaluate', {
+                    expression: 'rect = document.querySelector("' + selector + '").getClientRects()[0], { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right }',
                     returnByValue: true
                 })
-            )
+            })
             .then(result => {
                 let rect = result.result.value;
                 let centerX = (rect.left + rect.right) >> 1;

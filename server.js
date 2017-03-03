@@ -1,6 +1,7 @@
 'use strict';
 
 var port = 8889;
+var http = require('http');
 var Proxy = require('http-mitm-proxy');
 var sinon = require('sinon');
 var proxy = Proxy();
