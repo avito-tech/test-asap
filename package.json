@@ -4,17 +4,10 @@
   "description": "List of tasks: 1. Launch/stop Chrome and WS server 2. Selenium-like commands in extension 3. Proxy server 4. Server-side wrappings for extension commands 5. Integrational tests to verify it works 6. Presentation 7. Register name on npm 8. Icon 9. (coverage reports - if will have much time)",
   "main": "index.js",
   "dependencies": {
+    "chrome-location": "^1.2.1",
     "http-mitm-proxy": "^0.5.1",
     "sinon": "^1.17.7",
-    "socket.io": "^1.6.0",
-    "socket.io-adapter": "^1.1.0",
-    "socket.io-client": "^1.6.0"
-  },
-  "devDependencies": {
-    "chrome-launch": "^1.1.4",
-    "chrome-location": "^1.2.1",
-    "express": "^4.15.0",
-    "socket.io": "^1.7.3"
+    "socket.io": "^1.6.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
