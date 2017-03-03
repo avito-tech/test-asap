@@ -1,14 +1,11 @@
-const express = require('express');
-const app = express();
-const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')();
 
 const chrome = require('./chrome');
 const tab = require('./tab');
 
 const port = 3000;
 
-server.listen(port);
+io.listen(port);
 
 const extensionDir = './extension';
 const userDataDir = './tmp';
