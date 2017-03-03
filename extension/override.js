@@ -1,17 +1,11 @@
 const socket = io('http://localhost:3000');
 
-
 socket.on('connect', () => {
-
-    socket.on('event', () => {
-        console.log('event zbs');
+    socket.on('loadTab', data => {
+        chrome.tabs.create({ url: data.url, active: true, index: 0 }, tab => {
+            socket.emit('tabLoaded', { id: tab.id });
+        });
     });
-
-    socket.on('message', () => {
-        console.log('message zbs');
-    });
-
-    //socket.emit('norm');
 });
 
 var attach = function(debuggee) {

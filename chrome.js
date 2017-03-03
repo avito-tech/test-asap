@@ -8,15 +8,15 @@ let spawnProcess;
 function launch({ chromeLocation = chromeDefaultLocation, args = [], userDir = './tmp' }) {
     spawnProcess = spawn(chromeLocation, args);
 
-    process.on('exit', close);
-    process.on('close', close);
-    spawnProcess.on('close', close);
-    spawnProcess.on('exit', close);
+    process.on('exit', stop);
+    process.on('close', stop);
+    spawnProcess.on('close', stop);
+    spawnProcess.on('exit', stop);
 
     return spawnProcess;
 }
 
-function close() {
+function stop() {
     if (closed) {
         // chrome sometimes doesn't exit cleanly https://code.google.com/p/chromium/issues/detail?id=338000
         // so, if we get a second call, assume this has happend and kill the whole
@@ -28,13 +28,13 @@ function close() {
     }
 
     spawnProcess.kill();
-    process.removeListener('exit', close);
-    process.removeListener('close', close);
+    process.removeListener('exit', stop);
+    process.removeListener('close', stop);
 
     closed = true;
 }
 
 module.exports = {
     launch,
-    close
+    stop
 };

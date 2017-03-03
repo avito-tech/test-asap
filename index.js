@@ -4,20 +4,23 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
 const chrome = require('./chrome');
+const tab = require('./tab');
 
 const port = 3000;
+
+server.listen(port);
+
 const extensionDir = './extension';
 const userDataDir = './tmp';
 
-function tat(config) {
+function launch(config = {}) {
     return new Promise((resolve, reject) => {
-        server.listen(port);
-
         io.on('connection', client => {
-            resolve();
+            resolve(tab(client));
         });
 
         chrome.launch({
+            chromeLocation: config.chromeLocation,
             args: [
                 '--load-extension=' + extensionDir,
                 '--user-data-dir=' + userDataDir,
@@ -31,10 +34,12 @@ function tat(config) {
     });
 }
 
-tat().then(browser => {
-    //console.log(browser);
+function stop() {
+    chrome.close();
+    //io.close();
+}
 
-    setTimeout(() => {
-        chrome.close();
-    }, 5000);
-});
+module.exports = {
+    launch,
+    stop
+};

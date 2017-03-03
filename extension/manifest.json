@@ -14,7 +14,7 @@
     ],
     "background": {
         "scripts": [
-            "lib/socket.io.js",
+            "lib/socket.io/socket.io.js",
             "override.js"
         ],
         "persistent": false
