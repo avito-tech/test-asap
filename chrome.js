@@ -1,11 +1,10 @@
 const spawn = require('child_process').spawn;
 const chromeDefaultLocation = require('chrome-location');
-//const rimraf = require('rimraf'); // Deep folder remove
 
 let closed = false;
 let spawnProcess;
 
-function launch({ chromeLocation = chromeDefaultLocation, args = [], userDir = './tmp' }) {
+function launch({ chromeLocation = chromeDefaultLocation, args = [] }) {
     spawnProcess = spawn(chromeLocation, args);
 
     process.on('exit', stop);

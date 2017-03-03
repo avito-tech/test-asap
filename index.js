@@ -1,6 +1,7 @@
 const io = require('socket.io')();
 
 const chrome = require('./chrome');
+const tmp = require('tmp');
 const tab = require('./tab');
 
 const port = 3000;
@@ -8,7 +9,7 @@ const port = 3000;
 io.listen(port);
 
 const extensionDir = './extension';
-const userDataDir = './tmp';
+const tmpDir = tmp.dirSync();
 
 function launch(config = {}) {
     return new Promise((resolve, reject) => {
@@ -20,7 +21,7 @@ function launch(config = {}) {
             chromeLocation: config.chromeLocation,
             args: [
                 '--load-extension=' + extensionDir,
-                '--user-data-dir=' + userDataDir,
+                '--user-data-dir=' + tmpDir.name,
                 '--no-first-run',
                 '--system-developer-mode',
                 '--silent-debugger-extension-api',

@@ -8,7 +8,8 @@
     "http-mitm-proxy": "^0.5.1",
     "sinon": "^1.17.7",
     "socket.io": "^1.6.0",
-    "socket.io-adapter": "^1.1.0"
+    "socket.io-adapter": "^1.1.0",
+    "tmp": "0.0.31"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
