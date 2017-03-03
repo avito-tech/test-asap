@@ -91,7 +91,7 @@ class Tab {
     }
 
     click(selector) {
-        selector = selector.replace('"', '\\"');
+        selector = selector.replace(/"/g, '\\"');
 
         return this._command('Runtime.evaluate', {
             expression: 'document.querySelector("' + selector + '").scrollIntoViewIfNeeded()'
@@ -189,7 +189,7 @@ class Tab {
     }
 
     countItems(selector) {
-        selector = selector.replace('"', '\\"');
+        selector = selector.replace(/"/g, '\\"');
 
         return new Promise((resolve) => {
             this._command('Runtime.evaluate', {
@@ -203,7 +203,7 @@ class Tab {
     }
 
     getStyle(selector, propName) {
-        selector = selector.replace('"', '\\"');
+        selector = selector.replace(/"/g, '\\"');
 
         return new Promise((resolve) => {
             this._command('Runtime.evaluate', {
@@ -217,7 +217,7 @@ class Tab {
     }
 
     getAttr(selector, attrName) {
-        selector = selector.replace('"', '\\"');
+        selector = selector.replace(/"/g, '\\"');
 
         return new Promise((resolve) => {
             this._command('Runtime.evaluate', {
