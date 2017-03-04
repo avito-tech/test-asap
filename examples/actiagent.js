@@ -20,20 +20,15 @@ stub.https.withArgs(
     respondWith.html('<h2>Meow!</h2>')
 );
 
-tat.start().then(Tab => {
-    return Tab.create('https://actiagent.ru').then((tab) => {
-        return tab.waitFor(link)
-            .then(() => tab.click(link))
-            .then(() => tab.waitFor(terms))
-            .then(() => tab.getText(terms))
-            //.then(text => console.log(text))
-            /*.then(() => tab.close())
-            .catch((err) => {
-                console.log(err);
-                //tab.close();
-            });*/
+tat.start().then(
+    Tab => {
+        return Tab.create('https://actiagent.ru').then((tab) => {
+            return tab.waitFor(link)
+                .then(() => tab.click(link))
+                .then(() => tab.waitFor(terms))
+                .then(() => tab.getText(terms))
+        });
+    },
+    err => {
+        console.log(err);
     });
-}, err => {
-    //console.log(err);
-})
-//.then(() => tat.stop());
