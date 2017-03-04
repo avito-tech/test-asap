@@ -5,6 +5,7 @@ const chrome = require('./lib/server/chrome');
 const tab = require('./lib/server/tab');
 const proxy = require('./lib/server/proxy');
 const stub = require('./lib/server/stub');
+const match = require('./lib/server/match');
 const respondWith = require('./lib/server/respondWith');
 const port = 3000;
 const extensionDir = path.join(__dirname, 'lib/extension');
@@ -47,6 +48,7 @@ module.exports = {
         ]);
     },
 
-    respondWith: respondWith,
-    stub: stub
+    match,
+    respondWith,
+    stub
 };
