@@ -109,13 +109,17 @@ tatt.start().then(Tab => {
 ### tab.waitFor(selector)
 `tab.waitFor(selector)` returns promise to be resolved when element appeares on the page.
 
-Note: element may be hidden via `display: none;`, but in this case the promise will be resolved anyway.
+Note: element may be hidden via `display: none;`, but in this case the promise will be resolved anyway. If you want to handle such cases use `tab.waitForVisible(selector)` instead
+### tab.waitForVisible(selector)
+`tab.waitFor(selector)` returns promise to be resolved when element becomes visible on the page.
 ### tab.typeText(selector, text)
 `tab.typeText(selector, text)` types `text` into node with `selector` selector. In the end it resolves the promise.
 ### tab.click(selector)
 `tab.click(selector)` clicks on node with `selector`selector. In the end it resolves the promise.
 ### tab.countItems(selector)
 `tab.countItems(selector)` returns promise to be resolved with number of element with `selector` selector presented on the page.
+### tab.isVisible(selector, className)
+`tab.isVisible(selector, className)`  returns promise to be resolved with `true` if element is visible on the page and `false` otherwise
 ### tab.getStyle(selector, propName)
 `tab.getStyle(selector, propName)` returns promise to be resolved with computed `propName` style of element with `selector`.
 ### tab.getAttr(selector, attrName)
@@ -123,7 +127,7 @@ Note: element may be hidden via `display: none;`, but in this case the promise w
 ### tab.getText(selector)
 `tab.getText(selector)` returns promise to be resolved with text content of element with `selector` selector
 ### tab.hasClass(selector, className)
-`tab.hasClass(selector, className)` returns promise which
+`tab.hasClass(selector, className)` returns promise to be resolved with `true` if element has `className` class and `false` otherwise
 ### tab.reload()
 `tab.reload()` reloads tab.
 ### tab.navigate(url)
