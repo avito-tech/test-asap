@@ -4,6 +4,7 @@ const chrome = require('./lib/server/chrome');
 const tab = require('./lib/server/tab');
 const proxy = require('./lib/server/proxy');
 const stub = require('./lib/server/stub');
+const respondWith = require('./lib/server/respondWith');
 const port = 3000;
 const extensionDir = './lib/extension';
 const tmpDir = tmp.dirSync();
@@ -45,5 +46,6 @@ module.exports = {
         ]);
     },
 
+    respondWith: respondWith,
     stub: stub
 };

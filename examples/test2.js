@@ -2,14 +2,15 @@
 var tat = require('../');
 var sinon = require('sinon');
 var stub = tat.stub;
+var respondWith = tat.respondWith;
 
 var link = '[role-marker="termsField/terms-link"]';
 var terms = '[role-marker="termsDialog"]';
 
-stub.withArgs(
+stub.https.withArgs(
     sinon.match.has('url', sinon.match('/rest/text/terms'))
 ).returns(
-    stub.html('<h2>LOL</h2>')
+    respondWith.html('<h2>LOL</h2>')
 );
 
 tat.start().then(Tab => {
