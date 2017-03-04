@@ -1,4 +1,4 @@
-const tat = require('./index');
+const tat = require('../');
 
 function assert(condition, message) {
     return new Promise((resolve, reject) => {
