@@ -1,3 +1,4 @@
+const path = require('path');
 const io = require('socket.io')();
 const tmp = require('tmp');
 const chrome = require('./lib/server/chrome');
@@ -6,7 +7,7 @@ const proxy = require('./lib/server/proxy');
 const stub = require('./lib/server/stub');
 const respondWith = require('./lib/server/respondWith');
 const port = 3000;
-const extensionDir = './lib/extension';
+const extensionDir = path.join(__dirname, 'lib/extension');
 const tmpDir = tmp.dirSync();
 
 function startChrome(config = {}) {
