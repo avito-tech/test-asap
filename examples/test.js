@@ -8,24 +8,27 @@ function assert(condition, message) {
 }
 
 tat.start().then(Tab => {
-    Tab.create('https://avito.ru').then((tab) =>
-
-        tab.typeText('#search', 'test text')
+    return Tab.create('https://avito.ru/moskva').then((tab) => {
+        return tab.typeText('#search', 'test text')
             .then(() => tab.click('.search.button'))
             .then(() => tab.waitFor('.item'))
             .then(() => tab.getStyle('.item', 'background-color'))
-            .then((color) => assert(color == 'rgb(255, 255, 255)'))
+            .then((color) => assert(color == 'rgb(255, 255, 255)', color))
             .then(() => tab.countItems('.item'))
-            .then((count) => assert(count > 3))
-            .then(() => tab.getAttr('.item:nth-child(3) a', 'href'))
-            .then(() => tab.hasClass('.item:nth-child(3) a', 'item-description-title-link'))
-            .then((has) => assert(has))
+            .then((count) => assert(count > 3, count))
+            .then(() => tab.getAttr('.item:nth-child(3) .title a', 'href'))
+            .then(() => tab.hasClass('.item:nth-child(3) .title a', 'item-description-title-link'))
+            .then((has) => assert(has, 'have no'))
+            .then(() => tab.navigate('https://avito.ru'))
+            .then(() => tab.waitFor('a'))
+            .then(() => tab.getText('a'))
+            .then(text => console.log(text))
             .then(() => tab.close())
             .catch((err) => {
                 console.log(err);
                 tab.close();
             })
-    );
+    });
 }, err => {
     console.log(err);
 })
