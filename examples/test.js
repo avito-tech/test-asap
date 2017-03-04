@@ -10,7 +10,8 @@ function assert(condition, message) {
 tat.start().then(Tab => {
     return Tab.create('https://avito.ru/moskva', {
         button: '.search.button',
-        item: '.item'
+        item: '.item',
+        lkLink: 'a'
     }).then((tab) => {
         return tab.typeText('#search', 'test text')
             .then(() => tab.button.click())
@@ -23,8 +24,8 @@ tat.start().then(Tab => {
             .then(() => tab.hasClass('.item:nth-child(3) .title a', 'item-description-title-link'))
             .then((has) => assert(has, 'has no class'))
             .then(() => tab.navigate('https://avito.ru'))
-            .then(() => tab.waitFor('a'))
-            .then(() => tab.getText('a'))
+            .then(() => tab.lkLink.waitFor())
+            .then(() => tab.lkLink.getText())
             .then(text => console.log(text))
             .then(() => tab.close())
             .catch((err) => {
