@@ -36,6 +36,7 @@ tatt.start().then(Tab => {
 })
 .then(() => tatt.stop());
 ```
+Note: for now this package uses ports 3000 and 8889 for communication. In order to work properly they should be free before running. Later this package will have ability to configure occupied ports
 
 # Docs
 
