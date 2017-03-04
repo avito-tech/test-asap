@@ -9,14 +9,14 @@ This package consists of two main parts:
 
 # Install
 ```
-npm link tatt
+npm install <path-to-cloned-repo>
 ```
 Note: you should have Google Chrome and Node.js with support of ES6 (at least v6.0)
 
 # Getting started
 Here is the sample script you can use to test browser commands:
 ```javascript
-const tatt = require('tatt');
+const tatt = require('test-all-the-things');
 
 tatt.start().then(Tab => {
     return Tab.create('https://avito.ru/moskva').then((tab) => {
@@ -137,7 +137,7 @@ tat.stub.https.withArgs(
 It requires `url` for opening tab. But if the second param was specified it will also extend newly created tab with page object properties. For example the code below does the same thing as the code from "Getting started" section
 
 ```javascript
-const tatt = require('tatt');
+const tatt = require('test-all-the-things');
 
 tatt.start().then(Tab => {
     return Tab.create('https://avito.ru/moskva', {
