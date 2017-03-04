@@ -1,0 +1,47 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <title>TEST</title>
+<script>
+function ready(fn) {
+    if (document.readyState != 'loading') {
+        fn();
+    } else {
+        document.addEventListener('DOMContentLoaded', fn);
+    }
+}
+
+ready(function() {
+    var timeout;
+    var input = window.input;
+
+    input.addEventListener('input', function() {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(function() {
+            let button = document.createElement('button');
+            button.textContent = 'Look at my horse, my horse is amazinG!';
+            document.body.appendChild(button);
+            button.onclick = () => {
+                fetch('/1.json?q=' + input.value)
+                    .then(res => res.json())
+                    .then(data => {
+                        let el = document.createElement(data.tag);
+                        el.innerHTML = data.inner;
+                        document.body.appendChild(el);
+                    });
+            };
+        }, 1000);
+    });
+});
+</script>
+
+</head>
+<body>
+    <input type="text" id="input">
+    <div style="height: 5000px"></div>
+    <div id="response"/>
+</body>
+</html>
