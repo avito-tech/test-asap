@@ -8,13 +8,16 @@ function assert(condition, message) {
 }
 
 tat.start().then(Tab => {
-    return Tab.create('https://avito.ru/moskva').then((tab) => {
+    return Tab.create('https://avito.ru/moskva', {
+        button: '.search.button',
+        item: '.item'
+    }).then((tab) => {
         return tab.typeText('#search', 'test text')
-            .then(() => tab.click('.search.button'))
-            .then(() => tab.waitFor('.item'))
-            .then(() => tab.getStyle('.item', 'background-color'))
+            .then(() => tab.button.click())
+            .then(() => tab.item.waitFor())
+            .then(() => tab.item.getStyle('background-color'))
             .then((color) => assert(color == 'rgba(0, 0, 0, 0)', color))
-            .then(() => tab.countItems('.item'))
+            .then(() => tab.item.countItems('.item'))
             .then((count) => assert(count >= 3, 'less than 3  - ' + count))
             .then(() => tab.getAttr('.item:nth-child(3) .title a', 'href'))
             .then(() => tab.hasClass('.item:nth-child(3) .title a', 'item-description-title-link'))
