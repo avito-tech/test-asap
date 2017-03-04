@@ -1,19 +1,23 @@
 const path = require('path');
 const tat = require('../');
-const sinon = require('sinon');
-const stub = tat.stub;
-const {match, respondWith} = tat;
 
-stub.https.withArgs(
-    match.url('logo-avito.svg')
+tat.stub.https.withArgs(
+    tat.match.url('logo-avito.svg')
 ).returns(
-    respondWith.file(path.join(__dirname, 'avito/logo-avito.svg'))
+    tat.respondWith.file(path.join(__dirname, 'avito/logo-avito.svg'))
 );
 
-tat.start().then(Tab => {
-    return Tab.create('https://avito.ru').then((tab) => {
+const selectors = {
+    input: '#search'
+};
 
-    });
-}, err => {
-    //console.log(err);
-});
+tat.start().then(
+    Tab => Tab.create('https://avito.ru/moskva').then(
+        tab => tab
+            .waitFor(selectors.input)
+            .then(() => tab.typeText(selectors.input, 'Avito layk'))
+    ),
+    err => {
+        console.log(err);
+    }
+);
