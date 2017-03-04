@@ -35,7 +35,7 @@ var exitCode = 0;
 tat.start().then(Tab => {
     return Tab.create('https://avito.ru/index.html').then((tab) => {
         return tab.typeText('input', 'some')
-            .then(() => tab.waitFor('button'))
+            .then(() => tab.waitForVisible('button'))
             .then(() => tab.click('button'))
             .then(() => tab.waitFor('span'))
             .then(() => tab.getText('span'))

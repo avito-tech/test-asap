@@ -20,10 +20,13 @@ ready(function() {
         if (timeout) {
             clearTimeout(timeout);
         }
+
         timeout = setTimeout(function() {
-            let button = document.createElement('button');
-            button.textContent = 'Look at my horse, my horse is amazinG!';
-            document.body.appendChild(button);
+//                    let button = document.createElement('button');
+//            button.textContent = 'Look at my horse, my horse is amazinG!';
+//            document.body.appendChild(button);
+            var button = document.querySelector('button');
+            button.style.display = 'inline-block';
             button.onclick = () => {
                 fetch('/1.json?q=' + input.value)
                     .then(res => res.json())
@@ -43,5 +46,6 @@ ready(function() {
     <input type="text" id="input">
     <div style="height: 5000px"></div>
     <div id="response"/>
+    <button style="display: none">Look at my horse, my horse is amazinG!</button>
 </body>
 </html>
