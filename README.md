@@ -66,6 +66,69 @@ There is also `stubs.reset()` synchronous method which resets stubs to their def
 
 Note: you should not store `stubs.https` and `stubs.http` to variables because otherwise everything will be broken after `stubs.reset()`
 
+## tatt.match
+`tatt.match` contains helpers for simpler matching against often used rules.
+### tatt.match.url(url)
+Matches if request contains `url` as a substring
+```javascript
+tat.stub.https.withArgs(
+    tat.match.url('logo-avito.svg')
+).returns(
+    tat.respondWith.file(path.join(__dirname, 'avito/logo-avito.svg'))
+);
+```
+
+## tatt.respondWith
+`tatt.respondWith` contains helpers for simpler responding with popular type of responses.
+### tatt.respondWith.text(text)
+`tatt.respondWith.text(text)` responds with `text` as plain text
+```javascript
+tat.stub.https.withArgs(
+    sinon.match.any
+).returns(
+    tat.respondWith.text('Hello world!')
+);
+```
+### tatt.respondWith.html(html)
+`tatt.respondWith.html(html)` responds with `html` as html document
+```javascript
+tat.stub.https.withArgs(
+    tat.match.url('index.html')
+).returns(
+    tat.respondWith.html('<h1>Hello world!</h1>')
+);
+```
+### tatt.respondWith.json(jsObject)
+`tatt.respondWith.json(jsObject)` stringifies `jsObject` and sends it as json
+```javascript
+tat.stub.https.withArgs(
+    tat.match.url('/1.json')
+).returns(
+    tat.respondWith.json({ hello: 'world' })
+);
+```
+
+### tatt.respondWith.file(absolutePathToFile)
+`tatt.respondWith.file(absolutePathToFile)` responds with content of `absolutePathToFile`
+```javascript
+stub.https.withArgs(
+    tatt.match.url('/res/7EiNlv7G_KCvanpivhp5XQ.jpg')
+).returns(
+    respondWith.file(path.join(__dirname, 'actiagent/meow.jpg'))
+);
+```
+
+### tatt.respondWith.serveStatic(pathToCut, absolutePathToDir)
+`tatt.respondWith.serveStatic(pathToCut, absolutePathToDir)` replaces drops `pathToCut` and prepends `absolutePathToDir` to the rest
+```javascript
+// Here /public/pics/1.jpeg will be answered with content of ../../pictures/1.jpeg
+tat.stub.https.withArgs(
+    tat.match.url('/public/pics')
+).returns(
+    tat.respondWith.json('/public/pics', path.join(__dirname, '../../pictures'))
+);
+```
+
 ## Tab methods
 
 ### Tab.load(url[, pageObject])
