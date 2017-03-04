@@ -15,7 +15,7 @@
     ],
     "background": {
         "scripts": [
-            "lib/socket.io/socket.io.js",
+            "lib/socket.io.min.js",
             "tab.js",
             "override.js"
         ],
