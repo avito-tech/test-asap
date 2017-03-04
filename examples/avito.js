@@ -7,15 +7,13 @@ tat.stub.https.withArgs(
     tat.respondWith.file(path.join(__dirname, 'avito/logo-avito.svg'))
 );
 
-const selectors = {
-    input: '#search'
-};
-
 tat.start().then(
-    Tab => Tab.create('https://avito.ru/moskva').then(
-        tab => tab
-            .waitFor(selectors.input)
-            .then(() => tab.typeText(selectors.input, 'Avito layk'))
+    Tab => Tab.create('https://avito.ru/moskva', {
+        input: '#search'
+    }).then(
+        tab => tab.input
+            .waitFor()
+            .then(() => tab.input.typeText('Avito layk'))
     ),
     err => {
         console.log(err);
