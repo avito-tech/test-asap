@@ -17,7 +17,7 @@
         "scripts": [
             "lib/socket.io.min.js",
             "tab.js",
-            "override.js"
+            "protocol.js"
         ],
         "persistent": false
     },
