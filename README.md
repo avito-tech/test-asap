@@ -1,7 +1,6 @@
 # Test all the things!
 
 # Idea
-
 Idea of this package is to get all-in-one package ready to easily setup functional and integration testing.
 
 This package consists of two main parts:
@@ -9,16 +8,13 @@ This package consists of two main parts:
 * proxy programmable via Sinon.JS stubs
 
 # Install
-
 ```
 npm link tatt
 ```
 Note: you should have Google Chrome and Node.js with support of ES6 (at least v6.0)
 
 # Getting started
-
 Here is the sample script you can use to test browser commands:
-
 ```javascript
 const tatt = require('tatt');
 
@@ -44,17 +40,14 @@ tatt.start().then(Tab => {
 # Docs
 
 ## tatt.start()
-
 `tatt.start` starts stubs proxy server and browser. It returns promise which will be resolved with `Tab` class used for monitoring.
 
 Note: for now system designed in the way that permits running only one instance of `tatt`. So you should not try to run `tatt.start()` several times.
 
 ## tatt.stop()
-
 `tatt.start` stops stubs proxy server and browser. It returns promise which will be resolved when everything was stopped.
 
 ## tatt.stubs
-
 `tatt.stubs` contains Sinon.JS stubs used for programming proxy server behavior. It contains `http` and `https` stubs used in this way:
 ```javascript
 stub.https.withArgs(
@@ -76,7 +69,6 @@ Note: you should not store `stubs.https` and `stubs.http` to variables because o
 ## Tab methods
 
 ### Tab.load(url[, pageObject])
-
 `Tab.load` - is an asynchronous `Factory Method`. It returns instance of `Tab` class.
 
 It requires `url` for opening tab. But if the second param was specified it will also extend newly created tab with page object properties. For example the code below does the same thing as the code from "Getting started" section
@@ -110,6 +102,7 @@ tatt.start().then(Tab => {
 `tab.waitFor(selector)` returns promise to be resolved when element appeares on the page.
 
 Note: element may be hidden via `display: none;`, but in this case the promise will be resolved anyway. If you want to handle such cases use `tab.waitForVisible(selector)` instead
+
 ### tab.waitForVisible(selector)
 `tab.waitFor(selector)` returns promise to be resolved when element becomes visible on the page.
 ### tab.typeText(selector, text)
