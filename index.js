@@ -1,14 +1,13 @@
 const io = require('socket.io')();
-
-const chrome = require('./chrome');
 const tmp = require('tmp');
-const tab = require('./tab');
+const chrome = require('./lib/server/chrome');
+const tab = require('./lib/server/tab');
 
 const port = 3000;
 
 io.listen(port);
 
-const extensionDir = './extension';
+const extensionDir = './lib/extension';
 const tmpDir = tmp.dirSync();
 
 function launch(config = {}) {
