@@ -1,3 +1,4 @@
+/* eslint no-console: ["error", { allow: ["warn", "error", "log"] }] */
 const tat = require('../');
 
 function assert(condition, message) {
@@ -6,8 +7,8 @@ function assert(condition, message) {
     });
 }
 
-tat.launch().then(Tab => {
-    Tab.create('https://avito.ru').then((tab) => {
+tat.start().then(Tab => {
+    Tab.create('https://avito.ru').then((tab) =>
 
         tab.typeText('#search', 'test text')
             .then(() => tab.click('.search.button'))
@@ -23,8 +24,9 @@ tat.launch().then(Tab => {
             .catch((err) => {
                 console.log(err);
                 tab.close();
-            });
-    });
-}, error => {
-    console.log(error);
-});
+            })
+    );
+}, err => {
+    console.log(err);
+})
+.then(() => tat.stop());

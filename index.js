@@ -2,21 +2,21 @@ const io = require('socket.io')();
 const tmp = require('tmp');
 const chrome = require('./lib/server/chrome');
 const tab = require('./lib/server/tab');
-
+const proxy = require('./lib/server/proxy');
+const stub = require('./lib/server/stub');
 const port = 3000;
-
-io.listen(port);
-
 const extensionDir = './lib/extension';
 const tmpDir = tmp.dirSync();
 
-function launch(config = {}) {
+function startChrome(config = {}) {
+    io.listen(port);
+
     return new Promise((resolve, reject) => {
         io.on('connection', client => {
             resolve(tab(client));
         });
 
-        chrome.launch({
+        chrome.start({
             chromeLocation: config.chromeLocation,
             args: [
                 '--load-extension=' + extensionDir,
@@ -32,12 +32,18 @@ function launch(config = {}) {
     });
 }
 
-function stop() {
-    chrome.close();
-    //io.close();
-}
-
 module.exports = {
-    launch,
-    stop
+    start() {
+        return proxy.start()
+            .then(() => startChrome());
+    },
+
+    stop() {
+        return Promise.all([
+            chrome.stop(),
+            proxy.stop()
+        ]);
+    },
+
+    stub: stub
 };
