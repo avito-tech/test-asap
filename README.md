@@ -16,9 +16,9 @@ Note: you should have Google Chrome and Node.js with support of ES6 (at least v4
 # Getting started
 Here is the sample script you can use to test browser commands:
 ```javascript
-const tatt = require('test-all-the-things');
+const testAsap = require('test-asap');
 
-tatt.start().then(Tab => {
+testAsap.start().then(Tab => {
     return Tab.create('https://avito.ru/moskva').then((tab) => {
         return tab.typeText('#search', 'lala')
             .then(() => tab.click('.search.button'))
@@ -34,22 +34,22 @@ tatt.start().then(Tab => {
 }, err => {
     console.log(err);
 })
-.then(() => tatt.stop());
+.then(() => testAsap.stop());
 ```
 Note: for now this package uses ports 3000 and 8889 for communication. In order to work properly they should be free before running. Later this package will have ability to configure occupied ports
 
 # Docs
 
-## tatt.start()
-`tatt.start` starts stubs proxy server and browser. It returns promise which will be resolved with `Tab` class used for monitoring.
+## testAsap.start()
+`testAsap.start` starts stubs proxy server and browser. It returns promise which will be resolved with `Tab` class used for monitoring.
 
-Note: for now system designed in the way that permits running only one instance of `tatt`. So you should not try to run `tatt.start()` several times.
+Note: for now system designed in the way that permits running only one instance of `testAsap`. So you should not try to run `testAsap.start()` several times.
 
-## tatt.stop()
-`tatt.start` stops stubs proxy server and browser. It returns promise which will be resolved when everything was stopped.
+## testAsap.stop()
+`testAsap.start` stops stubs proxy server and browser. It returns promise which will be resolved when everything was stopped.
 
-## tatt.stubs
-`tatt.stubs` contains Sinon.JS stubs used for programming proxy server behavior. It contains `http` and `https` stubs used in this way:
+## testAsap.stubs
+`testAsap.stubs` contains Sinon.JS stubs used for programming proxy server behavior. It contains `http` and `https` stubs used in this way:
 ```javascript
 stub.https.withArgs(
     sinon.match.has('url', sinon.match('/rest/text/terms/'))
@@ -67,66 +67,66 @@ There is also `stubs.reset()` synchronous method which resets stubs to their def
 
 Note: you should not store `stubs.https` and `stubs.http` to variables because otherwise everything will be broken after `stubs.reset()`
 
-## tatt.match
-`tatt.match` contains helpers for simpler matching against often used rules.
-### tatt.match.url(url)
+## testAsap.match
+`testAsap.match` contains helpers for simpler matching against often used rules.
+### testAsap.match.url(url)
 Matches if request contains `url` as a substring
 ```javascript
-tat.stub.https.withArgs(
-    tat.match.url('logo-avito.svg')
+testAsap.stub.https.withArgs(
+    testAsap.match.url('logo-avito.svg')
 ).returns(
-    tat.respondWith.file(path.join(__dirname, 'avito/logo-avito.svg'))
+    testAsap.respondWith.file(path.join(__dirname, 'avito/logo-avito.svg'))
 );
 ```
 
-## tatt.respondWith
-`tatt.respondWith` contains helpers for simpler responding with popular type of responses.
-### tatt.respondWith.text(text)
-`tatt.respondWith.text(text)` responds with `text` as plain text
+## testAsap.respondWith
+`testAsap.respondWith` contains helpers for simpler responding with popular type of responses.
+### testAsap.respondWith.text(text)
+`testAsap.respondWith.text(text)` responds with `text` as plain text
 ```javascript
-tat.stub.https.withArgs(
+testAsap.stub.https.withArgs(
     sinon.match.any
 ).returns(
-    tat.respondWith.text('Hello world!')
+    testAsap.respondWith.text('Hello world!')
 );
 ```
-### tatt.respondWith.html(html)
-`tatt.respondWith.html(html)` responds with `html` as html document
+### testAsap.respondWith.html(html)
+`testAsap.respondWith.html(html)` responds with `html` as html document
 ```javascript
-tat.stub.https.withArgs(
-    tat.match.url('index.html')
+testAsap.stub.https.withArgs(
+    testAsap.match.url('index.html')
 ).returns(
-    tat.respondWith.html('<h1>Hello world!</h1>')
+    testAsap.respondWith.html('<h1>Hello world!</h1>')
 );
 ```
-### tatt.respondWith.json(jsObject)
-`tatt.respondWith.json(jsObject)` stringifies `jsObject` and sends it as json
+### testAsap.respondWith.json(jsObject)
+`testAsap.respondWith.json(jsObject)` stringifies `jsObject` and sends it as json
 ```javascript
-tat.stub.https.withArgs(
-    tat.match.url('/1.json')
+testAsap.stub.https.withArgs(
+    testAsap.match.url('/1.json')
 ).returns(
-    tat.respondWith.json({ hello: 'world' })
+    testAsap.respondWith.json({ hello: 'world' })
 );
 ```
 
-### tatt.respondWith.file(absolutePathToFile)
-`tatt.respondWith.file(absolutePathToFile)` responds with content of `absolutePathToFile`
+### testAsap.respondWith.file(absolutePathToFile)
+`testAsap.respondWith.file(absolutePathToFile)` responds with content of `absolutePathToFile`
 ```javascript
 stub.https.withArgs(
-    tatt.match.url('/res/7EiNlv7G_KCvanpivhp5XQ.jpg')
+    testAsap.match.url('/res/7EiNlv7G_KCvanpivhp5XQ.jpg')
 ).returns(
     respondWith.file(path.join(__dirname, 'actiagent/meow.jpg'))
 );
 ```
 
-### tatt.respondWith.serveStatic(pathToCut, absolutePathToDir)
-`tatt.respondWith.serveStatic(pathToCut, absolutePathToDir)` replaces drops `pathToCut` and prepends `absolutePathToDir` to the rest
+### testAsap.respondWith.serveStatic(pathToCut, absolutePathToDir)
+`testAsap.respondWith.serveStatic(pathToCut, absolutePathToDir)` replaces drops `pathToCut` and prepends `absolutePathToDir` to the rest
 ```javascript
 // Here /public/pics/1.jpeg will be answered with content of ../../pictures/1.jpeg
-tat.stub.https.withArgs(
-    tat.match.url('/public/pics')
+testAsap.stub.https.withArgs(
+    testAsap.match.url('/public/pics')
 ).returns(
-    tat.respondWith.json('/public/pics', path.join(__dirname, '../../pictures'))
+    testAsap.respondWith.json('/public/pics', path.join(__dirname, '../../pictures'))
 );
 ```
 
@@ -138,9 +138,9 @@ tat.stub.https.withArgs(
 It requires `url` for opening tab. But if the second param was specified it will also extend newly created tab with page object properties. For example the code below does the same thing as the code from "Getting started" section
 
 ```javascript
-const tatt = require('test-all-the-things');
+const testAsap = require('test-asap');
 
-tatt.start().then(Tab => {
+testAsap.start().then(Tab => {
     return Tab.create('https://avito.ru/moskva', {
         button: '.search.button',
         item: '.item'
@@ -159,7 +159,7 @@ tatt.start().then(Tab => {
 }, err => {
     console.log(err);
 })
-.then(() => tatt.stop());
+.then(() => testAsap.stop());
 ```
 
 ### tab.waitFor(selector)

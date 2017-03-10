@@ -1,7 +1,7 @@
 {
-  "name": "test-all-the-things",
+  "name": "test-asap",
   "version": "1.0.0",
-  "description": "List of tasks: 1. Launch/stop Chrome and WS server 2. Selenium-like commands in extension 3. Proxy server 4. Server-side wrappings for extension commands 5. Integrational tests to verify it works 6. Presentation 7. Register name on npm 8. Icon 9. (coverage reports - if will have much time)",
+  "description": "Package for easy to start browser testing",
   "main": "index.js",
   "dependencies": {
     "chrome-location": "^1.2.1",
