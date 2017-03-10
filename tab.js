@@ -12,9 +12,9 @@ function register(resolve, reject) {
         delete callbacks[cid];
 
         if (data.success) {
-            resolve(result)
+            resolve(data.result)
         } else {
-            reject(result);
+            reject(data.result);
         }
     };
 
@@ -34,9 +34,7 @@ function tab(socket) {
             return;
         }
 
-        TabProxy.prototype[methodName] = function() {
-            var args = arguments;
-
+        TabProxy.prototype[methodName] = function(...args) {
             return new Promise((resolve, reject) => {
                 var cid = register(resolve, reject);
 
@@ -60,7 +58,9 @@ function tab(socket) {
 
     TabProxy.create = (url) => {
         return new Promise((resolve, reject) => {
-            var cid = register(resolve, reject);
+            var cid = register(tabId => {
+                resolve(new TabProxy(tabId))
+            }, reject);
 
             socket.emit('tabCreate', { url, cid });
         });

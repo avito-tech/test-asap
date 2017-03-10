@@ -14,7 +14,6 @@ tat.launch().then(Tab => {
             .then((has) => assert(has))
             .then(() => tab.close())
             .catch((err) => {
-                alert(JSON.stringify(err));
                 tab.close();
             });
     });

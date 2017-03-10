@@ -23,7 +23,7 @@ socket.on('connect', () => {
             });
         }
 
-        properTab[data.command](...data.args)
+        properTab[data.command].apply(properTab, data.args)
             .then((result) => {
                 socket.emit('result', {
                     success: true,
@@ -37,32 +37,5 @@ socket.on('connect', () => {
                     cid: data.cid
                 });
             });
-    }
-
-    _enableDOM() {
-        if (this._domEnabled) {
-            return Promise.resolve();
-        } else {
-            return this._command('DOM.enable')
-                .then(() => {
-                    this._domEnabled = true;
-                });
-        }
-    }
-}
-
-Tab.create = (location) => {
-    return new Promise(function(resolve, reject) {
-        chrome.tabs.create({ url: location, active: true, index: 0 }, (tab) => {
-            let debuggee = { tabId: tab.id };
-            let tabObj = new Tab(debuggee);
-
-            waitForTabToLoad(debuggee)
-                .then(() => attach(debuggee))
-                .then(() => {
-                    resolve(tabObj);
-                })
-                .catch(reject);
-        });
     });
-};
+});
