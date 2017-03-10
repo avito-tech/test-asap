@@ -1,4 +1,6 @@
 /* eslint no-console: ["error", { allow: ["warn", "error", "log"] }] */
+'use strict';
+
 const tat = require('../');
 
 function assert(condition, message) {

@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
     env: {
         browser: true,
@@ -12,6 +14,7 @@ module.exports = {
         chrome: true
     },
     rules: {
+        strict: 2,
         indent: [2, 4, { SwitchCase: 1 }],
         'linebreak-style': [2, 'unix'],
         'no-multiple-empty-lines': [2, { max: 1 }],

@@ -1,3 +1,6 @@
+/* eslint no-console: ["error", { allow: ["log"] }] */
+'use strict';
+
 const path = require('path');
 const tat = require('../');
 

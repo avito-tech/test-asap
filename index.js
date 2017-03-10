@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require('path');
 const io = require('socket.io')();
 const tmp = require('tmp');
@@ -11,10 +13,12 @@ const port = 3000;
 const extensionDir = path.join(__dirname, 'lib/extension');
 const tmpDir = tmp.dirSync();
 
-function startChrome(config = {}) {
+function startChrome(config) {
+    config = config || {};
+
     io.listen(port);
 
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
         io.on('connection', client => {
             resolve(tab(client));
         });

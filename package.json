@@ -12,6 +12,7 @@
     "tmp": "0.0.31"
   },
   "scripts": {
+    "lint": "eslint .",
     "test": "node test/integration/test.js"
   },
   "repository": {
@@ -19,5 +20,11 @@
     "url": "https://github.com/avito-tech/test-asap.git"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node" : ">=4.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.17.1"
+  }
 }

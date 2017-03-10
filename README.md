@@ -11,7 +11,7 @@ This package consists of two main parts:
 ```
 npm install <path-to-cloned-repo>
 ```
-Note: you should have Google Chrome and Node.js with support of ES6 (at least v6.0)
+Note: you should have Google Chrome and Node.js with support of ES6 (at least v4.0)
 
 # Getting started
 Here is the sample script you can use to test browser commands:

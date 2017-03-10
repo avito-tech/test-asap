@@ -1,7 +1,9 @@
 /* eslint no-console: ["error", { allow: ["warn", "error", "log"] }] */
-var tat = require('../');
-var sinon = require('sinon');
-var match = sinon.match;
+'use strict';
+
+const tat = require('../');
+const sinon = require('sinon');
+const match = sinon.match;
 
 tat.stub.https.withArgs(
     match.any
