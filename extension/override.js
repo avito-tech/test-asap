@@ -148,6 +148,10 @@ class Tab {
               })
             );
     }
+
+    close() {
+        return new Promise(resolve => chrome.tabs.remove(this.debuggee.tabId, resolve));
+    }
 }
 
 Tab.create = (location) => {
