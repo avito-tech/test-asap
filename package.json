@@ -1,6 +1,6 @@
 {
   "name": "test-asap",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Package for easy to start browser testing",
   "main": "index.js",
   "dependencies": {
