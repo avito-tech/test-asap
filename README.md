@@ -1,4 +1,4 @@
-# Test all the things!
+# Test ASAP (as soon as possible)
 
 # Idea
 Idea of this package is to get all-in-one package ready to easily setup functional and integration testing.
