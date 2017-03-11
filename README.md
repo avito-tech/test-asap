@@ -1,4 +1,4 @@
-# Test ASAP (as soon as possible)
+# Test ASAP (as soon as possible) [![Build Status](https://travis-ci.org/avito-tech/test-asap.svg?branch=master)](https://travis-ci.org/avito-tech/test-asap)
 
 # Idea
 Idea of this package is to get all-in-one package ready to easily setup functional and integration testing.
