@@ -9,7 +9,7 @@ This package consists of two main parts:
 
 # Install
 ```
-npm install <path-to-cloned-repo>
+npm install --save test-asap
 ```
 Note: you should have Google Chrome and Node.js with support of ES6 (at least v4.0)
 
