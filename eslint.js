@@ -7,9 +7,13 @@ module.exports = {
         mocha: true
     },
     globals: {
-        asset: true,
-        basis: true,
-        resource: true,
+        expect: true,
+        describe: true,
+        it: true,
+        beforeAll: true,
+        afterAll: true,
+        beforeEach: true,
+        afterEach: true,
         Promise: true,
         chrome: true
     },

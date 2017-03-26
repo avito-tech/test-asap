@@ -1,12 +1,14 @@
 /* eslint no-console: ["error", { allow: ["warn", "error", "log"] }] */
-var path = require('path');
-var tat = require('../');
-var sinon = require('sinon');
-var stub = tat.stub;
-var respondWith = tat.respondWith;
+'use strict';
 
-var link = '[role-marker="termsField/terms-link"]';
-var terms = '[role-marker="termsDialog"]';
+const path = require('path');
+const tat = require('../');
+const sinon = require('sinon');
+const stub = tat.stub;
+const respondWith = tat.respondWith;
+
+const link = '[role-marker="termsField/terms-link"]';
+const terms = '[role-marker="termsDialog"]';
 
 stub.https.withArgs(
     sinon.match.has('url', sinon.match('/res/7EiNlv7G_KCvanpivhp5XQ_'))
@@ -20,14 +22,14 @@ tat.start().then(Tab => {
             .then(() => tab.click(link))
             .then(() => tab.waitFor(terms))
             .then(() => tab.getText(terms))
-            //.then(text => console.log(text))
-            /*.then(() => tab.close())
+            .then(text => console.log(text))
+            .then(() => tab.close())
             .catch((err) => {
                 console.log(err);
-                //tab.close();
-            });*/
+                tab.close();
+            });
     });
 }, err => {
-    //console.log(err);
+    console.log(err);
 })
-//.then(() => tat.stop());
+.then(() => tat.stop());

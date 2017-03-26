@@ -37,7 +37,7 @@ tat.start().then(Tab => {
             .catch((err) => {
                 console.log(err);
                 tab.close();
-            })
+            });
     });
 }, err => {
     console.log(err);

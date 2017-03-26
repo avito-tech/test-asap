@@ -4,12 +4,9 @@
 const testAsap = require('../..');
 const sinon = require('sinon');
 const match = sinon.match;
-const fs = require('fs');
 const http = require('http');
 
-const htmlText = fs.readFileSync(__dirname + '/test.html', 'utf8');
-
-describe('Test ASAP', function(){
+describe('Test ASAP', function() {
     beforeAll(function(done) {
         testAsap.start().then(Tab => {
             this.Tab = Tab;
@@ -63,13 +60,13 @@ describe('Test ASAP', function(){
 
                     let responseStr = JSON.stringify(response);
                     res.write(responseStr.substring(0, 10));
-                    setTimeout(function(){
+                    setTimeout(function() {
                         res.end(responseStr.substring(10));
                     }, 1000);
                 });
 
                 jsonServer.listen(8080, resolve);
-            })
+            });
         }
         function stopServer() {
             return new Promise(resolve => jsonServer.close(resolve));
@@ -80,7 +77,7 @@ describe('Test ASAP', function(){
                 testAsap.match.url('secret.json')
             ).returns(
                 testAsap.respondWith.jsonInterceptor(modify)
-            )
+            );
         }
 
         testAsap.stub.http.withArgs(
@@ -99,7 +96,7 @@ describe('Test ASAP', function(){
                 expect(text).toBe(expected);
             })
             .then(stopServer)
-            .then(done, done.fail)
+            .then(done, done.fail);
     });
 
     it('just works', function(done) {
@@ -112,11 +109,13 @@ describe('Test ASAP', function(){
         testAsap.stub.https.withArgs(
             match.has('url', match('1.json?q=some'))
         ).returns(
-            testAsap.respondWith.json({tag: 'span', inner: 'secret'})
+            testAsap.respondWith.json({ tag: 'span', inner: 'secret' })
         );
 
         this.Tab.create('https://avito.ru/index.html')
-            .then(tab => { this.tab = tab; })
+            .then(tab => {
+                this.tab = tab;
+            })
             .then(() => this.tab.typeText('input', 'some'))
             .then(() => this.tab.waitForVisible('button'))
             .then(() => this.tab.click('button'))
