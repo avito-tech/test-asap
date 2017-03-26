@@ -60,7 +60,12 @@ describe('Test ASAP', function(){
                 jsonServer = http.createServer((req, res) => {
                     res.setHeader('Content-Type', 'application/json');
                     res.writeHead(200);
-                    res.end(JSON.stringify(response));
+
+                    let responseStr = JSON.stringify(response);
+                    res.write(responseStr.substring(0, 10));
+                    setTimeout(function(){
+                        res.end(responseStr.substring(10));
+                    }, 1000);
                 });
 
                 jsonServer.listen(8080, resolve);
