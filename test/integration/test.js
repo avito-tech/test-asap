@@ -30,7 +30,7 @@ describe('Test ASAP', function() {
         }
     });
 
-    it('respondWith.jsonInterceptor', function(done) {
+    it('respondWith.jsonTransformer', function(done) {
         let jsonServer;
         const response = {
             val: 'abc',
@@ -39,13 +39,13 @@ describe('Test ASAP', function() {
                 { name: 'b' }
             ]
         };
-        const expected = JSON.stringify(modify(clone(response)));
+        const expected = JSON.stringify(transform(clone(response)));
 
         function clone(obj) {
             return JSON.parse(JSON.stringify(obj));
         }
 
-        function modify(response) {
+        function transform(response) {
             response.val = response.val + 'def';
             response.items.length = 1;
 
@@ -76,7 +76,7 @@ describe('Test ASAP', function() {
             testAsap.stub.http.withArgs(
                 testAsap.match.url('secret.json')
             ).returns(
-                testAsap.respondWith.jsonInterceptor(modify)
+                testAsap.respondWith.jsonTransformer(transform)
             );
         }
 

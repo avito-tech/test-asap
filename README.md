@@ -48,8 +48,8 @@ Note: for now system designed in the way that permits running only one instance 
 ## testAsap.stop()
 `testAsap.start` stops stubs proxy server and browser. It returns promise which will be resolved when everything was stopped.
 
-## testAsap.stubs
-`testAsap.stubs` contains Sinon.JS stubs used for programming proxy server behavior. It contains `http` and `https` stubs used in this way:
+## testAsap.stub
+`testAsap.stub` contains Sinon.JS stubs used for programming proxy server behavior. It contains `http` and `https` stubs used in this way:
 ```javascript
 stub.https.withArgs(
     sinon.match.has('url', sinon.match('/rest/text/terms/'))
@@ -108,6 +108,20 @@ testAsap.stub.https.withArgs(
     testAsap.respondWith.json({ hello: 'world' })
 );
 ```
+
+### testAsap.respondWith.jsonTransformer(transformer)
+`testAsap.respondWith.jsonTransformer(transformer)` firstly tries to get original response from server. After all data has been received, it parses response as JSON and passes it as first argument of `transformer` function. After `transformer` was called it passes modified data to browser (i.e. to Chrome). For example, the code below will transform request `/1.json` `{"foo": 1, "baz": 2}` to `{"foo": "bar", "baz": 2}`
+```javascript
+testAsap.stub.https.withArgs(
+    testAsap.match.url('/1.json')
+).returns(
+    testAsap.respondWith.jsonTransformer(json => {
+        json.foo = 'bar';
+    })
+);
+```
+
+Note: transformer assumed to be a dirty function, not a pure one
 
 ### testAsap.respondWith.file(absolutePathToFile)
 `testAsap.respondWith.file(absolutePathToFile)` responds with content of `absolutePathToFile`
