@@ -121,6 +121,26 @@ describe('Test ASAP', function() {
             .then(done, done.fail);
     });
 
+    it('properly determines handles strange selectors', function(done) {
+        testAsap.stub.http.withArgs(
+            match.has('url', match('strange.html'))
+        ).returns(
+            testAsap.respondWith.file(__dirname + '/strange.html')
+        );
+
+        this.Tab.create('http://avito.ru/strange.html')
+            .then(tab => {
+                this.tab = tab;
+            })
+            .then(() => this.tab.waitFor('[role-marker="abc"]'))
+
+            .then(() => this.tab.isVisible('[role-marker="abc"]'))
+            .then(visible => expect(visible).toBe(true))
+
+            .then(done, done.fail);
+    });
+
+
     it('just works', function(done) {
         testAsap.stub.https.withArgs(
             match.has('url', match('index.html'))
