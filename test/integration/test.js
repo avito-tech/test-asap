@@ -99,6 +99,28 @@ describe('Test ASAP', function() {
             .then(done, done.fail);
     });
 
+    it('properly determines visibility of inline elements', function(done) {
+        testAsap.stub.http.withArgs(
+            match.has('url', match('inline.html'))
+        ).returns(
+            testAsap.respondWith.file(__dirname + '/inline.html')
+        );
+
+        this.Tab.create('http://avito.ru/inline.html')
+            .then(tab => {
+                this.tab = tab;
+            })
+            .then(() => this.tab.waitFor('#invisible'))
+
+            .then(() => this.tab.isVisible('#invisible'))
+            .then(visible => expect(visible).toBe(false))
+
+            .then(() => this.tab.isVisible('#visible'))
+            .then(visible => expect(visible).toBe(true))
+
+            .then(done, done.fail);
+    });
+
     it('just works', function(done) {
         testAsap.stub.https.withArgs(
             match.has('url', match('index.html'))
