@@ -160,7 +160,6 @@ describe('Test ASAP', function() {
             .then(done, done.fail);
     });
 
-
     it('just works', function(done) {
         testAsap.stub.https.withArgs(
             match.has('url', match('index.html'))
