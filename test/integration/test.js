@@ -5,6 +5,7 @@ const testAsap = require('../..');
 const sinon = require('sinon');
 const match = sinon.match;
 const http = require('http');
+const zlib = require('zlib');
 
 describe('Test ASAP', function() {
     beforeAll(function(done) {
@@ -30,73 +31,92 @@ describe('Test ASAP', function() {
         }
     });
 
-    it('respondWith.jsonTransformer', function(done) {
-        let jsonServer;
-        const response = {
-            val: 'abc',
-            items: [
-                { name: 'a' },
-                { name: 'b' }
-            ]
-        };
-        const expected = JSON.stringify(transform(clone(response)));
+    describe('respondWith.jsonTransformer', function() {
+        beforeEach(function() {
+            this.response = {
+                val: 'abc',
+                items: [
+                    { name: 'a' },
+                    { name: 'b' }
+                ]
+            };
+            this.transform = function(response) {
+                response.val = response.val + 'def';
+                response.items.length = 1;
 
-        function clone(obj) {
-            return JSON.parse(JSON.stringify(obj));
-        }
+                return response;
+            };
+            this.expected = JSON.stringify(this.transform(clone(this.response)));
 
-        function transform(response) {
-            response.val = response.val + 'def';
-            response.items.length = 1;
+            function clone(obj) {
+                return JSON.parse(JSON.stringify(obj));
+            }
 
-            return response;
-        }
+            this.startServer = () => {
+                return new Promise(resolve => {
+                    this.jsonServer = http.createServer(this.requestCallback);
 
-        function startServer() {
-            return new Promise(resolve => {
-                jsonServer = http.createServer((req, res) => {
-                    res.setHeader('Content-Type', 'application/json');
-                    res.writeHead(200);
-
-                    let responseStr = JSON.stringify(response);
-                    res.write(responseStr.substring(0, 10));
-                    setTimeout(function() {
-                        res.end(responseStr.substring(10));
-                    }, 1000);
+                    this.jsonServer.listen(8080, resolve);
                 });
+            };
+            this.stopServer = () => {
+                return new Promise(resolve => this.jsonServer.close(resolve));
+            };
 
-                jsonServer.listen(8080, resolve);
-            });
-        }
-        function stopServer() {
-            return new Promise(resolve => jsonServer.close(resolve));
-        }
+            this.setInterceptor = () => {
+                testAsap.stub.http.withArgs(
+                    testAsap.match.url('secret.json')
+                ).returns(
+                    testAsap.respondWith.jsonTransformer(this.transform)
+                );
+            };
 
-        function setInterceptor() {
             testAsap.stub.http.withArgs(
-                testAsap.match.url('secret.json')
+                testAsap.match.url('respondWith.html')
             ).returns(
-                testAsap.respondWith.jsonTransformer(transform)
+                testAsap.respondWith.file(__dirname + '/respondWith.html')
             );
-        }
 
-        testAsap.stub.http.withArgs(
-            testAsap.match.url('respondWith.html')
-        ).returns(
-            testAsap.respondWith.file(__dirname + '/respondWith.html')
-        );
+            this.performTest = () =>
+                this.startServer()
+                    .then(this.setInterceptor)
+                    .then(() => this.Tab.create('http://127.0.0.1:8080/respondWith.html'))
+                    .then(tab => this.tab = tab)
+                    .then(() => this.tab.waitFor('#result'))
+                    .then(() => this.tab.getText('#result'))
+                    .then(text => {
+                        expect(text).toBe(this.expected);
+                    })
+                    .then(this.stopServer);
+        });
 
-        startServer()
-            .then(setInterceptor)
-            .then(() => this.Tab.create('http://127.0.0.1:8080/respondWith.html'))
-            .then(tab => this.tab = tab)
-            .then(() => this.tab.waitFor('#result'))
-            .then(() => this.tab.getText('#result'))
-            .then(text => {
-                expect(text).toBe(expected);
-            })
-            .then(stopServer)
-            .then(done, done.fail);
+        it('properly handles gzipped responses', function(done) {
+            this.requestCallback = (req, res) => {
+                res.setHeader('Content-Type', 'application/json');
+                res.setHeader('Content-Encoding', 'gzip');
+                res.writeHead(200);
+                res.end(zlib.gzipSync(JSON.stringify(this.response)));
+            };
+
+            this.performTest()
+                .then(done, done.fail);
+        });
+
+        it('properly handles chunked responses', function(done) {
+            this.requestCallback = (req, res) => {
+                res.setHeader('Content-Type', 'application/json');
+                res.writeHead(200);
+
+                let responseStr = JSON.stringify(this.response);
+                res.write(responseStr.substring(0, 10));
+                setTimeout(function() {
+                    res.end(responseStr.substring(10));
+                }, 1000);
+            };
+
+            this.performTest()
+                .then(done, done.fail);
+        });
     });
 
     it('properly determines visibility of inline elements', function(done) {
