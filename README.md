@@ -109,14 +109,25 @@ testAsap.stub.https.withArgs(
 );
 ```
 
-### testAsap.respondWith.jsonTransformer(transformer)
-`testAsap.respondWith.jsonTransformer(transformer)` firstly tries to get original response from server. After all data has been received, it parses response as JSON and passes it as first argument of `transformer` function. After `transformer` was called it passes modified data to browser (i.e. to Chrome). For example, the code below will transform request `/1.json` `{"foo": 1, "baz": 2}` to `{"foo": "bar", "baz": 2}`
+### testAsap.respondWith.jsonTransformer(responseTransformer[, requestBodyTransformer])
+`testAsap.respondWith.jsonTransformer(responseTransformer)` firstly tries to get original response from server. After all data has been received, it parses response as JSON and passes it as first argument of `responseTransformer` function. After `responseTransformer` was called it passes modified data to browser (i.e. to Chrome). For example, the code below will transform request `/1.json` `{"foo": 1, "baz": 2}` to `{"foo": "bar", "baz": 2}`
 ```javascript
 testAsap.stub.https.withArgs(
     testAsap.match.url('/1.json')
 ).returns(
     testAsap.respondWith.jsonTransformer(json => {
         json.foo = 'bar';
+    })
+);
+```
+
+`requestBodyTransformer` works in the same way. The only difference is that it tries to transform request body as JSON. For example, you may want to suppress some fields which produce some pollution or computations you would like to avoid. You can do it in this way
+```javascript
+testAsap.stub.https.withArgs(
+    testAsap.match.url('/2.json')
+).returns(
+    testAsap.respondWith.jsonTransformer(null, json => {
+        delete json.fieldIWantToHide;
     })
 );
 ```
