@@ -157,8 +157,8 @@ testAsap.stub.https.withArgs(
 
 ## Tab methods
 
-### Tab.load(url[, pageObject])
-`Tab.load` - is an asynchronous `Factory Method`. It returns instance of `Tab` class.
+### Tab.create(url[, pageObject])
+`Tab.create` - is an asynchronous `Factory Method`. It returns instance of `Tab` class.
 
 It requires `url` for opening tab. But if the second param was specified it will also extend newly created tab with page object properties. For example the code below does the same thing as the code from "Getting started" section
 
@@ -186,6 +186,11 @@ testAsap.start().then(Tab => {
 })
 .then(() => testAsap.stop());
 ```
+
+### Tab.removeBrowsingData(url[, pageObject])
+`Tab.create` does not clean any sessions. It gives you ability to use multiple tabs per tests but also gives more problems with cleaning up. Here comes the `Tab.removeBrowsingData` method which returns a promise to be resolved after cookies and local storages are cleaned.
+
+It requires `url` for opening tab. But if the second param was specified it will also extend newly created tab with page object properties. For example the code below does the same thing as the code from "Getting started" section
 
 ### tab.waitFor(selector)
 `tab.waitFor(selector)` returns promise to be resolved when element appeares on page.
