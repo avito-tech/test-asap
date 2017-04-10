@@ -196,10 +196,10 @@ Note: element may be hidden via `display: none;`, but in this case the promise w
 `tab.waitFor(selector)` returns promise to be resolved when element becomes visible on page.
 
 ### tab.typeText(selector, text)
-`tab.typeText(selector, text)` types `text` into node with `selector` selector. In the end it resolves the promise.
+`tab.typeText(selector, text)`  waits for node with `selector` selector to appear. After that it types `text` into the node and resolves the promise.
 
 ### tab.click(selector)
-`tab.click(selector)` clicks on node with `selector`selector. In the end it resolves the promise.
+`tab.click(selector)`  waits for node with `selector` selector to appear. After that it clicks on the node and resolves the promise.
 
 ### tab.countItems(selector)
 `tab.countItems(selector)` returns promise to be resolved with number of element with `selector` selector presented on page.

@@ -177,9 +177,7 @@ describe('Test ASAP', function() {
             .then(tab => {
                 this.tab = tab;
             })
-            .then(() => this.tab.waitFor('input'))
             .then(() => this.tab.typeText('input', 'some'))
-            .then(() => this.tab.waitForVisible('button'))
             .then(() => this.tab.click('button'))
             .then(() => this.tab.waitFor('span'))
             .then(() => this.tab.getText('span'))
